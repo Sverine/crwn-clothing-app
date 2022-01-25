@@ -6,7 +6,7 @@ import Homepage from './pages/homepage/Homepage.component';
 import ShopPage from './pages/shop/Shop.component';
 import Header from './components/header/Header.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/Sign-in-and-sign-up.component';
-import { auth } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 
 
 class App extends React.Component {
@@ -14,7 +14,7 @@ class App extends React.Component {
   constructor(){
     super();
     this.state={
-      curentUser: null
+      currentUser: null
     }
   }
 
@@ -22,10 +22,25 @@ class App extends React.Component {
    
   componentDidMount(){
     //a method gived from auth. It aware when somebody login or logout with making a manual fetch.
-    //This method need to have in parameter the user state
-    this.unsubscribeFromAuth = auth.onAuthStateChanged((user)=>{
-      this.setState({curentUser:user});
-    })
+    //This method need to have in parameter the user state given by the method
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth =>{
+      if (userAuth){
+        const userRef = await createUserProfileDocument(userAuth);
+        //this method is listening any changes into the db
+        userRef.onSnapshot((snapShot)=>{
+          this.setState({
+            currentUser:{
+              id:snapShot.id,
+              ...snapShot.data()
+            }
+          });
+          console.log(this.state)
+        })
+      }else{
+        this.setState({currentUser:userAuth })   //is equivalent to null
+      };
+
+    });
   }
 
   //That will close the subscribtion
@@ -38,7 +53,7 @@ class App extends React.Component {
   render(){
     return (
       <div>
-        <Header currentUser={this.state.curentUser}/>
+        <Header currentUser={this.state.currentUser}/>
         <Switch>
           <Route exact path="/" component={Homepage}/>
           <Route path="/shop" component={ShopPage}/>
