@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 
 import './Header.styles.scss';
 
+//currentUser is given by the mapStateToProps method passed in the connect method
 const Header = ({currentUser}) =>{
     return(
         <div className="header">
@@ -29,7 +30,10 @@ const Header = ({currentUser}) =>{
 }
 
 //Can be anything but this name is a standard redux codebases.
-//The state passed in argument is the state reducer
+//This method is used to get the state from reducer (which is passed in argument) from store
+//state is used to avoid writting store.getState()
+//We defined that the currentUser var is equal to the state registered from the reducer
+//By this way, this var can be used in the component 
 const mapStateToProps = (state) =>({
     currentUser: state.user.currentUser
 })

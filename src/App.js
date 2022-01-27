@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 
 import Homepage from './pages/homepage/Homepage.component';
@@ -15,7 +15,6 @@ class App extends React.Component {
   unsubscribeFromAuth = null;
    
   componentDidMount(){
-
     //This allow us to avoid write this.props.setCurrentUser;
     const { setCurrentUser } = this.props;
     
@@ -53,19 +52,29 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" component={Homepage}/>
           <Route path="/shop" component={ShopPage}/>
-          <Route path="/signin" component={SignInAndSignUpPage}/>
+          <Route exact path="/signin" render={()=> 
+            this.props.currentUser ? 
+              <Redirect to="/"/> : 
+              <SignInAndSignUpPage/> }
+          />
         </Switch>
       </div>
     );
   }
 }
 
-const mapDispatchToProps = (dispatch)=>({
+const mapStateToProps = (state) => ({
+  currentUser : state.user.currentUser
+})
+
+//This method is used to set the state in the reducer thanks to payload action
+const mapDispatchToProps = (dispatch) =>({
+  //user can be name as well as we want
   setCurrentUser : (user) => dispatch(setCurrentUser(user))
 }) 
 
-//we can pass null in the first argument, because we don't need any state from our reducer
+//The method need the state reducer in first argument, and the function of setting new state at 2nde argument
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps)
 (App);

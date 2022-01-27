@@ -1,4 +1,6 @@
 import { createStore, applyMiddleware } from "redux";
+
+//That give us the logs from our state after any actions have been fired
 import logger from "redux-logger";
 
 import rootReducer from "./root-reducer";
