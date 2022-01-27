@@ -4,11 +4,13 @@ import {ReactComponent as Logo} from '../../assets/crown.svg'
 import { auth } from "../../firebase/firebase.utils";
 //Hight Order Component (HOC) that let us modify our component to have access to things related to redux
 import { connect } from "react-redux";
+import CartIcon from "../cart-icon/Cart-icon.component";
+import CartDropdown from "../cart-dropdown/Cart-dropdown.component";
 
 import './Header.styles.scss';
 
 //currentUser is given by the mapStateToProps method passed in the connect method
-const Header = ({currentUser}) =>{
+const Header = ({currentUser, hidden}) =>{
     return(
         <div className="header">
             <Link className="logo-container" to="/">
@@ -24,7 +26,11 @@ const Header = ({currentUser}) =>{
                     :
                     <Link className="option" to="/signin"> SIGN IN</Link>
                 }
+                <CartIcon/>
             </div>
+            {
+                hidden ? null : <CartDropdown/>
+            }
         </div>
     )
 }
@@ -35,7 +41,8 @@ const Header = ({currentUser}) =>{
 //We defined that the currentUser var is equal to the state registered from the reducer
 //By this way, this var can be used in the component 
 const mapStateToProps = (state) =>({
-    currentUser: state.user.currentUser
+    currentUser: state.user.currentUser,
+    hidden : state.cart.hidden
 })
 
 //Connect is using to pass the state from a HOC.
