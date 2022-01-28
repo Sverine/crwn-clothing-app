@@ -1,5 +1,5 @@
 import { CartActionTypes } from './cart.types';
-import { addItemToCart } from './cart.utils';
+import { addItemToCart, removeItemFromCart} from './cart.utils';
 
 const INITIAL_STATE = {
     hidden:true,
@@ -20,6 +20,20 @@ const cartReducer = (state=INITIAL_STATE, action) => {
                 cartItems: addItemToCart(state.cartItems, action.payload)
                 //cartItems : [...state.cartItems, action.payload]
                 //This way to do with the spread and the array method is used to increment the array by keeping the rest already inside
+            }
+
+        case CartActionTypes.CLEAR_ITEM_FROM_CART:
+            return{
+                ...state,
+                cartItems:state.cartItems.filter((cartItem)=>{
+                    return cartItem.id !== action.payload.id
+                })
+            }
+
+        case CartActionTypes.REMOVE_ITEM:
+            return{
+                ...state,
+                cartItems:removeItemFromCart(state.cartItems, action.payload)
             }
         
         //Don't forget to always return the sate by default
