@@ -1,14 +1,19 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import { createStructuredSelector } from 'reselect';
+
 import './App.css';
 
 import Homepage from './pages/homepage/Homepage.component';
 import ShopPage from './pages/shop/Shop.component';
 import Header from './components/header/Header.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/Sign-in-and-sign-up.component';
+import CheckoutPage from './pages/checkout/Checkout.component';
+
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 import { connect } from 'react-redux';
 import { setCurrentUser } from './redux/user/user.actions';
+import {selectCurrentUser} from './redux/user/user.selectors'
 
 
 class App extends React.Component {
@@ -52,6 +57,8 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" component={Homepage}/>
           <Route path="/shop" component={ShopPage}/>
+          <Route eact path="/checkout" component={CheckoutPage}/>
+          {/* The render attribute is used to make a redirection */}
           <Route exact path="/signin" render={()=> 
             this.props.currentUser ? 
               <Redirect to="/"/> : 
@@ -63,8 +70,8 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  currentUser : state.user.currentUser
+const mapStateToProps = createStructuredSelector ({
+  currentUser : selectCurrentUser
 })
 
 //This method is used to set the state in the reducer thanks to payload action
