@@ -5,7 +5,7 @@ const StripeCheckoutButton = ({price})=>{
     //Stripe needs a price in cents, so we need to make the conversion
     const priceForStripe = price * 100;
     const publisahbleKey = 'pk_test_51KNM8ILJFn0Pxs8VxB26T4CwhIxuyQ1cFvnrXJpLU1xjn5X4hJHfEGWTHs4eHrqMGWmHkCU8yptfeFPOwdHLN4PJ00aYrvwqZ9'
-    const onToken = token=>{
+    const onToken = (token) =>{
         console.log(token);
         alert('Payment successfull')
     }

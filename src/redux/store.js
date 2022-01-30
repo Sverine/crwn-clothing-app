@@ -9,7 +9,11 @@ import { persistStore } from 'redux-persist';
 import rootReducer from "./root-reducer";
 
 //We decide to put the logger into an array instead of just an object in case we need to add things
-const middlewares = [logger];
+const middlewares = [];
+
+if (process.env.NODE_ENV==='development'){
+    middlewares.push(logger)
+}
 
 //This method need the root reducer and middlewares.
 export const store = createStore(rootReducer, applyMiddleware(...middlewares));
