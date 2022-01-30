@@ -11,6 +11,8 @@ import rootReducer from "./root-reducer";
 //We decide to put the logger into an array instead of just an object in case we need to add things
 const middlewares = [];
 
+
+//The way to configure things depends on the project's environement
 if (process.env.NODE_ENV==='development'){
     middlewares.push(logger)
 }

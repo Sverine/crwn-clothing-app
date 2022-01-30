@@ -1,17 +1,19 @@
 import React from "react";
 
-import './Cart-item.styles.scss';
+import { CartItemContainer, ImgContainer, ItemDetailsContainer, NameSpan } from "./Cart-item.styles";
 
 const CartItem = ({item})=>{
+    //To avoid use this, you also can make a deconstruction into the deconstruction passed as props by wiriting:
+    //const CartItem = ({item: { imageUrl, price, name, quantity }})
     const {imageUrl, price, name, quantity} = item;
     return(
-        <div className="cart-item">
-            <img src={imageUrl} alt="item" />
-            <div className="item-details">
-                <span className="name">{name}</span>
-                <span className="price">{quantity} x ${price}</span>
-            </div>
-        </div>
+        <CartItemContainer>
+            <ImgContainer src={imageUrl} alt="item" />
+            <ItemDetailsContainer>
+                <span>{name}</span>
+                <span>{quantity} x ${price}</span>
+            </ItemDetailsContainer>
+        </CartItemContainer>
     )
 }
 
