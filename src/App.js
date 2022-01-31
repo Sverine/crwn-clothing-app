@@ -14,18 +14,21 @@ import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 import { connect } from 'react-redux';
 import { setCurrentUser } from './redux/user/user.actions';
 import {selectCurrentUser} from './redux/user/user.selectors'
+// import { selectCollectionsForPreview } from './redux/shop/shop.selectors';
 
 
 class App extends React.Component {
   unsubscribeFromAuth = null;
    
   componentDidMount(){
+
     //This allow us to avoid write this.props.setCurrentUser;
     const { setCurrentUser } = this.props;
     
-
+    
     //a method gived from auth. It aware when somebody login or logout with making a manual fetch.
-    //This method need to have in parameter the user state given by the method
+    //This method need to have in parameter the userAuth which is in the Authentication tabs into firebase
+    //When ever a user sign up with email and password, or Google SignIn, the authentification will store the users called userAuth
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth =>{
       if (userAuth){
         const userRef = await createUserProfileDocument(userAuth);
@@ -38,6 +41,8 @@ class App extends React.Component {
         })
       }else{
         setCurrentUser(userAuth)   //is equivalent to null
+        //We run this function when we decided to move the shop data into firestore
+        // addCollectionAndDocuments('collections', collectionsArray.map(({title,items})=>({title, items})));
       };
 
     });
@@ -57,7 +62,7 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" component={Homepage}/>
           <Route path="/shop" component={ShopPage}/>
-          <Route eact path="/checkout" component={CheckoutPage}/>
+          <Route exact path="/checkout" component={CheckoutPage}/>
           {/* The render attribute is used to make a redirection */}
           <Route exact path="/signin" render={()=> 
             this.props.currentUser ? 
@@ -71,13 +76,14 @@ class App extends React.Component {
 }
 
 const mapStateToProps = createStructuredSelector ({
-  currentUser : selectCurrentUser
+  currentUser : selectCurrentUser,
+  // collectionsArray : selectCollectionsForPreview
 })
 
 //This method is used to set the state in the reducer thanks to payload action
 const mapDispatchToProps = (dispatch) =>({
   //user can be name as well as we want
-  setCurrentUser : (user) => dispatch(setCurrentUser(user))
+  setCurrentUser : (user) => dispatch(setCurrentUser(user)),
 }) 
 
 //The method need the state reducer in first argument, and the function of setting new state at 2nde argument

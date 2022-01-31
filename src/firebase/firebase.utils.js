@@ -41,6 +41,42 @@ export const createUserProfileDocument = async (userAuth, additionalData)=>{
 
 firebase.initializeApp(config);
 
+
+//This method is usefull if we decided to move data from app to Firestore
+export const addCollectionAndDocuments= async (collectionKey,objectsToAdd)=>{
+    const collectionRef = firestore.collection(collectionKey);
+
+    //is used when we need to run multiple function in a row
+    const batch = firestore.batch();
+    objectsToAdd.forEach((object)=>{
+        const newDocRef = collectionRef.doc();
+        batch.set(newDocRef,object)
+    });
+
+    return await batch.commit();
+}
+
+export const convertCollectionsSnpashotToMap = (collections) =>{
+    const transformedCollection = collections.docs.map((doc)=>{
+        const {title,items} = doc.data();
+
+        return {
+            //native JS method to convert string value into redeable URL string
+            routeName:encodeURI(title.toLowerCase()),
+            id:doc.id,
+            title,
+            items
+        }
+    });
+
+    //This method is used to pass the data of transformedCollection into reducer
+    //We use the reducer function to push all collections into arrays at every iteration of collections
+    return transformedCollection.reduce((accumulator, collection)=>{
+        accumulator[collection.title.toLowerCase()] = collection;
+        return accumulator;
+    },{})
+}
+
 //authentification
 export const auth=firebase.auth();
 
