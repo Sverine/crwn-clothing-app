@@ -22,3 +22,14 @@ export const selectCollection = memoize((collectionUrlParam)=>{
         // collections => (collections ? collections[collectionUrlParam] : null)
     )}
 )
+
+export const selectIsCollectionFetching = createSelector(
+    [selectShop],
+    (shop)=> shop.isFetching
+)
+
+export const selectIsCollectionsLoaded = createSelector(
+    [selectShop],
+    //!! is a way to return a boolean if the variable existing or not (in this case, if shop.collections is empty or not)
+    (shop)=> !!shop.collections
+)
