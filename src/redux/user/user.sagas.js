@@ -1,14 +1,14 @@
 import {takeLatest, put, all, call} from 'redux-saga/effects';
 
 import UserActionTypes from './user.types';
-import { signInFailure, signInSuccess, signOuSucess, signOuSFailure } from './user.actions';
+import { signInFailure, signInSuccess, signOuSucess, signOuSFailure, signUpFailure, signUpSuccess, signUpStart } from './user.actions';
 
 import { auth, googleProvider, createUserProfileDocument, getCurrentUser} from '../../firebase/firebase.utils';
 
 //GENERATED FUNCTION
-export function* getSnapshotFromUserAuth(userAuth){
+export function* getSnapshotFromUserAuth(userAuth, additionalData){
     try{
-        const userRef = yield call(createUserProfileDocument,userAuth)
+        const userRef = yield call(createUserProfileDocument,userAuth, additionalData)
         const userSnapShot = yield userRef.get();
 
         yield put(signInSuccess({id:userSnapShot.id, ...userSnapShot.data()}))
@@ -17,6 +17,28 @@ export function* getSnapshotFromUserAuth(userAuth){
     }
 }
 
+
+//SIGN UP
+export function* signUp({payload:{displayName, email, password}}){
+    try{
+        const {user} = yield auth.createUserWithEmailAndPassword(email, password);
+        // if(password !== confirmPassword){
+        //     yield alert("Passwords don't match");
+        //     return;
+        // }
+        // yield call(createUserProfileDocument, user, {displayName})
+        yield put(signUpSuccess({user, additionalData:{displayName}}))
+    }catch(error){
+        yield put(signUpFailure(error))
+    }
+}
+
+export function* signInAfterSignUp({payload:{user, additionalData}}){
+    yield getSnapshotFromUserAuth(user, additionalData);
+}
+
+
+//SIGN IN WITH GOOGLE AND EMAIL
 export function* signInWithGoogle(){
     try{
         const {user} = yield auth.signInWithPopup(googleProvider)
@@ -45,7 +67,7 @@ export function* isUserAuthenticated(){
         yield put(signInFailure(error))
     }
 }
-
+//SIGN OUT
 export function* signOut(){
     try{
         yield auth.signOut();
@@ -57,6 +79,14 @@ export function* signOut(){
 
 
 //ALL SAGAS FUNCTIONS WHICH WE WILL CALL INTO OTHER COMPONENTS
+export function* onSignUpStart(){
+    yield takeLatest(UserActionTypes.SIGN_UP_START,signUp)
+}
+
+export function* onSignUpSuccess(){
+    yield takeLatest(UserActionTypes.SIGN_UP_SUCCESS, signInAfterSignUp)
+}
+
 export function* onGoogleSignInStart(){
     yield takeLatest(UserActionTypes.GOOGLE_SIGN_IN_START,signInWithGoogle)
 }
@@ -78,6 +108,8 @@ export function* onSignOut(){
 //To export all sagas and pass it into the store
 export function* userSagas(){
     yield all([
+        call(onSignUpStart),
+        call(onSignUpSuccess),
         call(onGoogleSignInStart),
         call(onEmailSignInStart),
         call(onCheckUserSession),
