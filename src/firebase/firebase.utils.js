@@ -56,7 +56,7 @@ export const addCollectionAndDocuments= async (collectionKey,objectsToAdd)=>{
     return await batch.commit();
 }
 
-export const convertCollectionsSnpashotToMap = (collections) =>{
+export const convertCollectionsSnapshotToMap = (collections) =>{
     const transformedCollection = collections.docs.map((doc)=>{
         const {title,items} = doc.data();
 
@@ -77,18 +77,28 @@ export const convertCollectionsSnpashotToMap = (collections) =>{
     },{})
 }
 
+//This function allow us to call the onAuthStateChanged's method from auth to detect the userAuth
+export const getCurrentUser = () =>{
+    return new Promise((resolve, reject)=>{
+        const unsubscribe = auth.onAuthStateChanged(userAuth=>{
+            unsubscribe();
+            resolve(userAuth)
+        }, reject)
+    })
+}
+
 //authentification
 export const auth=firebase.auth();
 
 export const firestore=firebase.firestore();
 
 //Google authentification
-const provider = new firebase.auth.GoogleAuthProvider();
-provider.setCustomParameters({prompt:'select_account'});
+export const googleProvider = new firebase.auth.GoogleAuthProvider();
+googleProvider.setCustomParameters({prompt:'select_account'});
 export const signInWithGoogle = () =>(
     //this method need to have in argument the method we want to use for authentification
     //There is many popup possible, in this case, we use the Google one
-    auth.signInWithPopup(provider)
+    auth.signInWithPopup(googleProvider)
 );
 
 export default firebase;

@@ -1,5 +1,5 @@
 import { ShopActionTypes } from "./shop.types";
-import { firestore, convertCollectionsSnpashotToMap } from "../../firebase/firebase.utils";
+import { firestore, convertCollectionsSnapshotToMap } from "../../firebase/firebase.utils";
 
 export const fetchCollectionsStart = (collectionMap)=>(
     {
@@ -21,7 +21,7 @@ export const fetchCollectionsFailure = (errorMessage) =>(
     }
 )
 
-
+//Old code using Redux Thunk used inside the shop.component
 //This methods joins all the different actions written in the reducer
 //First, it will run a function which is going to dispatch and create the collectionRef
 //And then, it will dispatch/run the function of fetchCollectionStart
@@ -35,7 +35,7 @@ export const fetchCollectionsStartAsync = () => {
 
         // Wenever the collection is changing or is calling, that will execute this function
         collectionRef.get().then((snapshot) =>{
-            const collectionsMap = convertCollectionsSnpashotToMap(snapshot)
+            const collectionsMap = convertCollectionsSnapshotToMap(snapshot)
             //This method comes from the reducer, it allows to pass the collection from firebase into the map
             // updateCollections(collectionsMap)
             dispatch(fetchCollectionsSuccess(collectionsMap))

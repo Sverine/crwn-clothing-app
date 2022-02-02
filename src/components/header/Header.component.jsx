@@ -11,10 +11,11 @@ import CartDropdown from "../cart-dropdown/Cart-dropdown.component";
 import { selectCartHidden } from "../../redux/cart/cart.selectors";
 import { selectCurrentUser } from "../../redux/user/user.selectors";
 import {HeaderContainer, LogoContainer, OptionsContainer, OptionLink} from './Header.styles';
+import { signOuStart } from "../../redux/user/user.actions";
 
 
 //currentUser is given by the mapStateToProps method passed in the connect method
-const Header = ({currentUser, hidden}) =>{
+const Header = ({currentUser, hidden, signOuStart }) =>{
     return(
         <HeaderContainer>
             <LogoContainer to="/">
@@ -27,7 +28,7 @@ const Header = ({currentUser, hidden}) =>{
                 {
                     currentUser ?
                     //Using "as" is a way to use the style component and place it a div instead of Link component
-                    <OptionLink as="div" onClick={()=>auth.signOut()}>SIGN OUT</OptionLink>
+                    <OptionLink as="div" onClick={signOuStart}>SIGN OUT</OptionLink>
                     :
                     <OptionLink to="/signin"> SIGN IN</OptionLink>
                 }
@@ -59,7 +60,13 @@ const mapStateToProps = createStructuredSelector({
     hidden:selectCartHidden
 })
 
+const mapDispatchToProps = dispatch =>(
+    {
+        signOuStart:()=>dispatch(signOuStart())
+    }
+)
+
 
 
 //Connect is using to pass the state from a HOC.
-export default connect(mapStateToProps) (Header);
+export default connect(mapStateToProps,mapDispatchToProps) (Header);
