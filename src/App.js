@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 
@@ -16,13 +16,12 @@ import { checkUserSession } from './redux/user/user.actions';
 // import { selectCollectionsForPreview } from './redux/shop/shop.selectors';
 
 
-class App extends React.Component {
-  unsubscribeFromAuth = null;
-   
-  componentDidMount(){
-    const {checkUserSession} = this.props;
+const App = ({currentUser, checkUserSession}) => {
+
+  useEffect(()=>{
     checkUserSession()
-    
+  },[checkUserSession])
+   
     
     //a method gived from auth. It aware when somebody login or logout with making a manual fetch.
     //This method need to have in parameter the userAuth which is in the Authentication tabs into firebase
@@ -49,11 +48,10 @@ class App extends React.Component {
   //That will close the subscribtion
   // componentWillUnmount(){
   //   this.unsubscribeFromAuth();
-  }
+
 
   //With the two lifecycle methods here, this is how we handle our app being awaire of any changes on firebase;
 
-  render(){
     return (
       <div>
         <Header/>
@@ -63,14 +61,13 @@ class App extends React.Component {
           <Route exact path="/checkout" component={CheckoutPage}/>
           {/* The render attribute is used to make a redirection */}
           <Route exact path="/signin" render={()=> 
-            this.props.currentUser ? 
+            currentUser ? 
               <Redirect to="/"/> : 
               <SignInAndSignUpPage/> }
           />
         </Switch>
       </div>
     );
-  }
 }
 
 const mapStateToProps = createStructuredSelector ({
