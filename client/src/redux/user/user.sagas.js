@@ -22,11 +22,6 @@ export function* getSnapshotFromUserAuth(userAuth, additionalData){
 export function* signUp({payload:{displayName, email, password}}){
     try{
         const {user} = yield auth.createUserWithEmailAndPassword(email, password);
-        // if(password !== confirmPassword){
-        //     yield alert("Passwords don't match");
-        //     return;
-        // }
-        // yield call(createUserProfileDocument, user, {displayName})
         yield put(signUpSuccess({user, additionalData:{displayName}}))
     }catch(error){
         yield put(signUpFailure(error))

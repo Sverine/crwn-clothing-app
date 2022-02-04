@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { createStructuredSelector } from 'reselect';
 
 import './App.css';
 
@@ -10,18 +9,20 @@ import Header from './components/header/Header.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/Sign-in-and-sign-up.component';
 import CheckoutPage from './pages/checkout/Checkout.component';
 
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {selectCurrentUser} from './redux/user/user.selectors'
 import { checkUserSession } from './redux/user/user.actions';
 // import { selectCollectionsForPreview } from './redux/shop/shop.selectors';
 
 
-const App = ({currentUser, checkUserSession}) => {
+const App = () => {
 
-  useEffect(()=>{
-    checkUserSession()
-  },[checkUserSession])
-   
+  const currentUser = useSelector(selectCurrentUser);
+  const dispatch = useDispatch();
+
+    useEffect(()=>{
+      dispatch(checkUserSession())
+    },[dispatch])
     
     //a method gived from auth. It aware when somebody login or logout with making a manual fetch.
     //This method need to have in parameter the userAuth which is in the Authentication tabs into firebase
@@ -70,20 +71,6 @@ const App = ({currentUser, checkUserSession}) => {
     );
 }
 
-const mapStateToProps = createStructuredSelector ({
-  currentUser : selectCurrentUser,
-  // collectionsArray : selectCollectionsForPreview
-})
-
-
-const mapDispatchToProps = dispatch =>(
-  {
-    checkUserSession:()=>dispatch(checkUserSession())
-  }
-)
 
 //The method need the state reducer in first argument, and the function of setting new state at 2nde argument
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps)
-(App);
+export default App;
